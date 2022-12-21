@@ -5,6 +5,7 @@ package blockstore
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sync"
 	"sync/atomic"
 
@@ -140,6 +141,10 @@ func (bs *blockstore) HashOnRead(enabled bool) {
 }
 
 func (bs *blockstore) Get(ctx context.Context, k cid.Cid) (blocks.Block, error) {
+	if k.GetParam() != "" {
+		return nil, fmt.Errorf("paramerized cid in blockstore")
+	}
+
 	if !k.Defined() {
 		logger.Error("undefined cid in blockstore")
 		return nil, ipld.ErrNotFound{Cid: k}
